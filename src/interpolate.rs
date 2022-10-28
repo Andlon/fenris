@@ -64,6 +64,7 @@ impl<const D: usize> RTreeAccelerationStructure<D>
 where
     [f64; D]: rstar::Point,
 {
+    /// This is intended to be called with already known matching dimensions
     fn from_bounding_boxes<T: Real, D2: SmallDim>(boxes: &[AxisAlignedBoundingBox<T, D2>]) -> Self
     where
         DefaultAllocator: DimAllocator<T, D2>
@@ -73,6 +74,9 @@ where
             let geometries = boxes.iter()
                 .enumerate()
                 .map(|(i, bounding_box)| {
+                    // Make bounding box larger than necessary to accommodate
+                    // possible floating point errors
+                    let bounding_box = bounding_box.uniformly_scale(1.01);
                     let box_min: [f64; D] = bounding_box.min().map(|x| x.to_subset().unwrap()).into();
                     let box_max: [f64; D] = bounding_box.max().map(|x| x.to_subset().unwrap()).into();
                     GeomWithData::new(Rectangle::from_corners(box_min, box_max), i)
@@ -82,6 +86,19 @@ where
         } else {
             panic!("Mismatched dimensions");
         }
+    }
+
+    fn closest_element_candidates(&self, point: &[f64; D]) -> impl Iterator<Item=usize> {
+        let iter = self.tree.nearest_neighbor_iter(point);
+        if let Some(first) = iter.next() {
+            let index = first.data;
+            let rectangle = first.geom();
+            let max_dist = rectangle.max_dist_squared_to_point(&)
+        }
+        if let Some(first) = iter.peek() {
+            let
+        }
+
     }
 }
 
@@ -196,8 +213,8 @@ where
     ) {
         let mut workspace = self.workspace.borrow_mut();
         match Space::GeometryDim::dim() {
-            1 => {
-                let rtree: &RTree<Rectangle<[f64; 2]>> = workspace.get_or_default();
+            2 => {
+                let tree: &RTreeAccelerationStructure<2> = workspace.get_or_default();
             },
             _ => {}
         }

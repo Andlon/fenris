@@ -150,7 +150,7 @@ where
     D: DimName,
     DefaultAllocator: Allocator<T, D>,
 {
-    /// Computes the minimal bounding box which encloses both `this` and `other`.
+    /// Computes the minimal bounding box which encloses both `self` and `other`.
     pub fn enclose(&self, other: &AxisAlignedBoundingBox<T, D>) -> Self {
         let min = self.min.iter().zip(&other.min).map(|(a, b)| T::min(*a, *b));
         let min = OVector::<T, D>::from_iterator(min);
