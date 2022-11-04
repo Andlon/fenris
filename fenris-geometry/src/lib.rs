@@ -258,6 +258,10 @@ where
             })
     }
 
+    pub fn closest_point_to(&self, point: &OPoint<T, D>) -> OPoint<T, D> {
+        todo!()
+    }
+
     /// Compute the point in the bounding box furthest away from the given point.
     ///
     /// # Panics
